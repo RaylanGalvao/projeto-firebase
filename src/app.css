@@ -4,7 +4,6 @@
     flex-direction: column;
 }
 button{
-    margin-top: 10px;
     background-color: rgba(0, 0, 255, 0.781);
     color: white;
     border-radius: 5px;
