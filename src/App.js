@@ -14,7 +14,9 @@ import {
 
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
 } from "firebase/auth";
 
 import './app.css'
@@ -52,6 +54,23 @@ function App() {
     loadPosts()
   }, [])
 
+  useEffect(()=>{
+    async function checkLogin(){
+      onAuthStateChanged(auth, (user) => {
+        if(user){
+          setUser(true)
+          setUserDetail({
+            uid: user.uid,
+            email: user.email,
+          })
+        }else{
+          setUser(false)
+          setUserDetail({})
+        }
+      })
+    }
+    checkLogin()
+  },[])
 
   async function handleAdd() {
     //   await setDoc(doc(db, "posts", "12345"),{
@@ -121,8 +140,8 @@ function App() {
         setTitulo('')
         setAutor('')
       })
-      .catch(() => {
-        console.log("Erro ao atualizar post")
+      .catch((error) => {
+        console.log(error)
       })
   }
 
@@ -159,7 +178,7 @@ function App() {
 
       setUserDetail({
         uid: value.user.uid,
-        email: value.user.email
+        email: value.user.email,
       })
       setUser(true)
 
@@ -172,19 +191,22 @@ function App() {
   }
 
    async function fazerLogout(){
-
+    await signOut(auth)
+    setUser(false)
+    setUserDetail({})
   }
 
   return (
     <div>
       <h1>ReactJS + firebase :)</h1>
 
-      {user && (
-      <div>
-        <strong>Seja bem vindo(a) voce esta logado</strong>
-        <span>ID: {userDetail.uid} - Email: {userlDetail.email}</span>
-        <button onClick={fazerLogout}>Sair da conta</button>
-      <div/>
+      { user && (
+        <div>
+          <strong>Seja bem-vindo(a) (Você está logado!)</strong> <br/>
+          <span>ID: {userDetail.uid} - Email: {userDetail.email}</span> <br/>
+          <button onClick={fazerLogout}>Sai da conta</button>
+          <br/> <br/>
+        </div>
       )}
       
       <div className="conteiner">
